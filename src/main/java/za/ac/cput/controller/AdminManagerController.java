@@ -7,7 +7,6 @@ import za.ac.cput.domain.AdminManager;
 import za.ac.cput.service.AdminManagerService;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("MobileCarWashApp/adminManagerService")
@@ -31,8 +30,9 @@ public class AdminManagerController {
     }
 
     @PutMapping("/update")
-    public AdminManager update(@RequestBody AdminManager admin) {
-        return service.update(admin);
+    public ResponseEntity<AdminManager> update(@RequestBody AdminManager admin) {
+        AdminManager updated = service.update(admin);
+        return ResponseEntity.ok(updated);
     }
 
     @DeleteMapping("/delete/{adminManagerId}")

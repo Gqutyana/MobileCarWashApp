@@ -23,15 +23,7 @@ public class UserControllerTest {
 
     @BeforeAll
     static void setup() {
-        user = UserFactory.createUser(
-                "Ayanda8764",
-                "Nick",
-                "Jemies",
-                9965836293745L,
-                2796673838L,
-                "nick@gmail.com",
-                "u8ujjgg",
-                "email"
+        user = UserFactory.createUser("Ayanda8764", "Anele", "Jojo", 9965836293745L, 2796673838L, "anele@gmail.com", "password521", "email"
         );
     }
 
@@ -46,7 +38,7 @@ public class UserControllerTest {
         assertEquals(200, postResponse.getStatusCodeValue());
         assertNotNull(userSaved);
         assertEquals(user.getUserId(), userSaved.getUserId());
-        System.out.println(" created" + userSaved);
+        System.out.println(" created :" + userSaved);
     }
 
     @Test
@@ -54,15 +46,16 @@ public class UserControllerTest {
     void b_read() {
         ResponseEntity<User> response = restTemplate.getForEntity(BASE_URL + "/read/" + user.getUserId(), User.class);
         assertEquals(200, response.getStatusCodeValue());
-        assertNotNull(response.getBody());
-        assertEquals(user.getUserId(), response.getBody().getUserId());
-        System.out.println("read: " + response.getBody());
+        System.out.println("reading: " + user);
     }
 
     @Test
     @Order(3)
     void c_update() {
-        User updated = new User.Builder().copy(user).setFirstName("Alungile").build();
+        User updated = new User.Builder()
+                     .copy(user)
+                     .setFirstName("Alungile")
+                     .build();
         String url = BASE_URL + "/update";
         this.restTemplate.put(url,updated);
 

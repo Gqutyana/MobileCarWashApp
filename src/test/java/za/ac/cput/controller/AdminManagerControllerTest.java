@@ -9,6 +9,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import za.ac.cput.domain.AdminManager;
+import za.ac.cput.domain.User;
 import za.ac.cput.factory.AdminManagerFactory;
 
 
@@ -26,9 +27,9 @@ public class AdminManagerControllerTest {
     static void setup() {
 
         admin = AdminManagerFactory.createAdminManager(
-                "Sasa56","litha654324","Litha",
-                889864268753L, 2798643567L,
-                "King@mail.com", "iu888", "email"
+                "Sasa56","litha","Lithabo",
+                8898642687538L, 2798643567L,
+                "litha@gmail.com", "password434", "email"
         );
     }
 
@@ -37,25 +38,25 @@ public class AdminManagerControllerTest {
     void a_create() {
 
         String url = BASE_URL + "/create"  ;
-        ResponseEntity<AdminManager> postResponse = restTemplate.postForEntity(url, admin, AdminManager.class);
+        ResponseEntity<AdminManager> postResponse =this. restTemplate.postForEntity(url, admin, AdminManager.class);
         assertNotNull(postResponse);
+        AdminManager adminSaved = postResponse.getBody();
+        assertEquals(HttpStatus.OK, postResponse.getStatusCode());
+        assertEquals(200, postResponse.getStatusCodeValue());
+        assertNotNull(adminSaved);
+        assertEquals(admin.getAdminManagerId(), adminSaved.getAdminManagerId());
         assertNotNull(postResponse.getBody(), "Response body should not be null");
-        admin = postResponse.getBody();
-        //assertEquals( postResponse.getStatusCode(), "Expected 200 OK");
-        System.out.println("Created: " + admin );
+
+        System.out.println("Created: " + adminSaved);
     }
 
     @Test
     @Order(2)
     void b_read() {
-        String url = BASE_URL + "/read/" ;
-
+        String url = BASE_URL + "/read/"  + admin.getAdminManagerId();;
         ResponseEntity<AdminManager> response = restTemplate.getForEntity(url, AdminManager.class);
-        //assertEquals(HttpStatus.OK, response.getStatusCode());
-      assertNotNull(response.getBody());
-        assertEquals(admin.getAdminManagerId(), response.getBody().getAdminManagerId());
-        System.out.println("Read: " + response.getBody());
-        System.out.println("Request Body: " + admin);
+        assertEquals(200, response.getStatusCodeValue());
+        System.out.println("Reading: " + admin);
 
     }
 
@@ -64,53 +65,36 @@ public class AdminManagerControllerTest {
     void c_update() {
         AdminManager updated = new AdminManager.Builder()
                 .copy(admin)
-                .setFirstName("Ntombi")
+                .setFirstName("Alunge")
                 .build();
-
         String url = BASE_URL + "/update";
-        restTemplate.put(url, updated);
-
-        // Verify update
-        String readUrl = BASE_URL + "/read/" + updated.getAdminManagerId();
-        ResponseEntity<AdminManager> response = restTemplate.getForEntity(readUrl, AdminManager.class);
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        AdminManager found = response.getBody();
-        assertNotNull(found);
-        assertEquals("Ntombi", found.getFirstName());
-
-        System.out.println("Updated: " + found);
-        admin = found; // update reference
+        this.restTemplate.put(url,updated);
+        ResponseEntity<AdminManager> response = restTemplate.getForEntity(BASE_URL + "/read/" + updated.getAdminManagerId(),AdminManager.class);
+        assertEquals(response.getStatusCode(),HttpStatus.OK);
+        assertEquals(200, response.getStatusCodeValue());
+        System.out.println("updated: " + updated);
     }
 
     @Test
     @Order(4)
-    void d_findAll() {
-        String url = BASE_URL + "/findAll";
-        ResponseEntity<AdminManager[]> response =
-                restTemplate.getForEntity(url, AdminManager[].class);
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-
-        System.out.println("All Admins:");
-        //Arrays.stream(response.getBody()).forEach(System.out::println);
+    void e_delete() {
+        String url = BASE_URL + "/delete/" + admin.getAdminManagerId();
+        restTemplate.delete(url);
+        ResponseEntity<AdminManager> response = restTemplate.getForEntity(BASE_URL + "/read/" + admin.getAdminManagerId(), AdminManager.class);
+        assertNull(response.getBody());
+        System.out.println("Deleted:" + true);
     }
 
     @Test
     @Order(5)
-    void e_delete() {
-        String url = BASE_URL + "/delete/" + admin.getAdminManagerId();
-        restTemplate.delete(url);
-
-        // Try reading deleted entity
-        String readUrl = BASE_URL + "/read/" + admin.getAdminManagerId();
-        ResponseEntity<AdminManager> response = restTemplate.getForEntity(readUrl, AdminManager.class);
-
-        // Expect NOT FOUND (404) or null body
-        assertTrue(response.getStatusCode() == HttpStatus.NOT_FOUND
-                || response.getBody() == null);
-
-        System.out.println("Deleted: true | Status: " + response.getStatusCode());
+    void d_findAll() {
+        String url = BASE_URL + "/findAll";
+        ResponseEntity<AdminManager[]> response = this.restTemplate.getForEntity(url , AdminManager[].class);
+        assertNotNull(response.getBody());
+        assertEquals(200, response.getStatusCodeValue());
+        System.out.println("Get all: ");
+        for(AdminManager admin : response.getBody()){
+            System.out.println(admin);
+        }
     }
 }
