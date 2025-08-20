@@ -1,18 +1,26 @@
 package za.ac.cput.domain;
 
-public class Customer extends User{
+import jakarta.persistence.*;
 
-    private String customerId;
+@Entity
+public class Customer extends User{
+@Id
+@GeneratedValue(strategy = GenerationType.AUTO)
+
+    private Long customerId;
     private String carModel;
     private int carWashCount;
     private boolean freeWashActivated;
     private boolean freeBirthdayWash;
     private String bankName;
-    private long bankAccountNumber;;
-    private String ratingId;
+    private long bankAccountNumber;
+    private Long ratingId;
+
+    @ManyToOne
+    @JoinColumn(name = "address_street_number")
     private Address address;
 
-    private Customer(){
+    public Customer() {
 
     }
 
@@ -32,6 +40,7 @@ public class Customer extends User{
         this.notificationPreference = builder.notificationPreference;
         this.lastName = builder.lastName;
         this.firstName = builder.firstName;
+        this.identificationNumber = builder.identificationNumber;
 
 
     }
@@ -40,7 +49,7 @@ public class Customer extends User{
         return carModel;
     }
 
-    public String getCustomerId() {
+    public Long getCustomerId() {
         return customerId;
     }
 
@@ -52,7 +61,7 @@ public class Customer extends User{
         return freeWashActivated;
     }
 
-    public boolean isFreewBirthdayWash() {
+    public boolean isFreeBirthdayWash() {
         return freeBirthdayWash;
     }
 
@@ -64,7 +73,7 @@ public class Customer extends User{
         return bankAccountNumber;
     }
 
-    public String getRatingId() {
+    public Long getRatingId() {
         return ratingId;
     }
 
@@ -95,7 +104,7 @@ public class Customer extends User{
     }
 
     public static class Builder{
-        private String ratingId;
+        private Long ratingId;
         private String firstName;
         private String lastName;
         private int carWashCount;
@@ -108,11 +117,11 @@ public class Customer extends User{
         private String email;
         private String notificationPreference;
         private String password;
-        private String customerId;
+        private Long customerId;
         private String carModel;
         private Address address;
 
-        public Builder setRatingId(String ratingId) {
+        public Builder setRatingId(Long ratingId) {
             this.ratingId = ratingId;
             return this;
         }
@@ -178,7 +187,7 @@ public class Customer extends User{
             return this;
         }
 
-        public Builder setCustomerId(String customerId) {
+        public Builder setCustomerId(Long customerId) {
             this.customerId = customerId;
             return this;
         }

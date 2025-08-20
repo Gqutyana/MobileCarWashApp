@@ -34,4 +34,8 @@ public class Helper {
         return  true;
     }
 
+    public static boolean isValidBankAccount(long accountNumber) {
+        return String.valueOf(accountNumber).length() >= 8;
+    }
+
 }
